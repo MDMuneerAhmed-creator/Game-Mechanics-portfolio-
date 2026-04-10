@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mohammad Muneer Ahmed — Game Mechanics Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #0d0d14;
+    --surface: #12121c;
+    --border: #252540;
+    --accent: #7c6aff;
+    --accent2: #c8a84b;
+    --text: #eaeaf5;
+    --muted: #6b6b9a;
+    --dim: #2a2a50;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(124,106,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124,106,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 60px;
+    background: rgba(0,0,0,0.90);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+    position: relative;
+  }
+
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 1px;
+    background: var(--accent);
+    transition: width 0.3s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+  .nav-links a:hover::after { width: 100%; }
+
+  section { position: relative; z-index: 1; }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 120px 60px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-glow {
+    position: absolute;
+    top: -500px; right: -500px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(124,106,255,0.10) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .hero-glow2 {
+    position: absolute;
+    bottom: -500px; left: -500px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(200,168,75,0.06) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .hero-content { max-width: 820px; }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    animation: fadeUp 0.8s 0.2s both;
+  }
+
+  .hero-tag::before {
+    content: '';
+    display: block;
+    width: 32px; height: 1px;
+    background: var(--accent);
+  }
+
+  h1.hero-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+    animation: fadeUp 0.9s 0.4s both;
+  }
+
+  h1.hero-name span {
+    display: block;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-bio {
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 540px;
+    margin-bottom: 48px;
+    line-height: 1.8;
+    animation: fadeUp 0.9s 0.6s both;
+  }
+
+  .hero-bio strong { color: var(--text); font-weight: 500; }
+
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    animation: fadeUp 0.9s 0.8s both;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 32px;
+    background: var(--accent);
+    color: var(--bg);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.3s;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  }
+
+  .btn-primary:hover {
+    background: #9b8dff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(124,106,255,0.35);
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 32px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .hero-stats {
+    display: flex;
+    flex-direction: row;
+    gap: 32px;
+    justify-content: flex-end;
+    opacity: 1;
+  }
+
+  .stat-item {
+    text-align: center;
+    border-right: 1px solid var(--border);
+    padding-right: 20px;
+  }
+
+  .hero-stats .stat-item:last-child { border-right: none; padding-right: 0; }
+
+  .stat-number {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2rem;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* ── ABOUT ── */
+  #about {
+    padding: 120px 60px;
+    border-top: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    max-width: 60px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 60px;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .about-text p {
+    color: var(--muted);
+    line-height: 1.9;
+    margin-bottom: 20px;
+    font-size: 1.05rem;
+  }
+
+  .about-text p strong { color: var(--text); font-weight: 500; }
+
+  .info-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 32px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .info-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2));
+  }
+
+  .info-card-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .info-card-value {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text);
+  }
+
+  .info-card-sub {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* ── SKILLS ── */
+  #skills {
+    padding: 120px 60px;
+    border-top: 1px solid var(--border);
+    background: var(--bg2);
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .skill-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    text-align: center;
+    transition: all 0.3s;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .skill-chip::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+
+  .skill-chip:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(124,106,255,0.15);
+  }
+
+  .skill-chip:hover::after { transform: scaleX(1); }
+
+  .skill-icon { font-size: 2rem; margin-bottom: 12px; }
+
+  .skill-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+
+  .skill-type {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+
+  .game-preview {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    object-position: center top;
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+    display: block;
+    filter: brightness(0.92);
+    transition: filter 0.3s;
+  }
+  .game-card:hover .game-preview { filter: brightness(1.05); }
+
+  /* ── GAMES ── */
+  #games {
+    padding: 120px 60px;
+    border-top: 1px solid var(--border);
+  }
+
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+  }
+
+  .game-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .game-card::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s;
+  }
+
+  .game-card:hover {
+    border-color: var(--dim);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.55), 0 0 0 1px rgba(124,106,255,0.1);
+  }
+
+  .game-card:hover::before { transform: scaleX(1); }
+
+  .game-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    margin-bottom: 24px;
+    display: block;
+  }
+
+  .game-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+
+  .game-desc {
+    color: var(--muted);
+    line-height: 1.8;
+    font-size: 0.95rem;
+    margin-bottom: 28px;
+    flex: 1;
+  }
+
+  .game-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    border: 1px solid rgba(124,106,255,0.25);
+    padding: 4px 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: rgba(0,212,170,0.04);
+  }
+
+  .game-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent2);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    transition: color 0.3s, gap 0.3s;
+    margin-top: auto;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+  }
+
+  .game-link:hover { color: var(--accent); gap: 14px; }
+
+  .game-link svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+  /* ── TEAM PROJECT ── */
+  #team {
+    padding: 120px 60px;
+    border-top: 1px solid var(--border);
+    background: var(--bg2);
+  }
+
+  .team-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 60px;
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .team-card::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+
+  .team-card-left .team-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .team-card-left h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    line-height: 1.1;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .team-card-left .team-desc {
+    color: var(--muted);
+    line-height: 1.9;
+    font-size: 1rem;
+    margin-bottom: 32px;
+  }
+
+  .team-card-left .team-desc strong { color: var(--text); font-weight: 500; }
+
+  .team-role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: 1px solid var(--accent);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: rgba(0,212,170,0.05);
+    margin-bottom: 24px;
+  }
+
+  .team-role-badge::before {
+    content: '★';
+    font-size: 0.65rem;
+  }
+
+  .team-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+
+  .team-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent2);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    transition: color 0.3s, gap 0.3s;
+  }
+
+  .team-link:hover { color: var(--accent); gap: 14px; }
+
+  .team-card-right .team-meta-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .team-members {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .team-member {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    background: rgba(0,212,170,0.03);
+    border: 1px solid var(--border);
+  }
+
+  .member-avatar {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: var(--bg);
+    flex-shrink: 0;
+  }
+
+  .member-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+
+  .member-role-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-left: auto;
+  }
+
+  /* ── MENTOR ── */
+  #mentor {
+    padding: 120px 60px;
+    border-top: 1px solid var(--border);
+  }
+
+  .mentor-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 60px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    max-width: 860px;
+  }
+
+  .mentor-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2));
+  }
+
+  .mentor-avatar-wrap {
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .mentor-avatar {
+    width: 100px; height: 100px;
+    background: linear-gradient(135deg, rgba(200,168,75,0.12), rgba(124,106,255,0.08));
+    border: 2px solid var(--accent2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2rem;
+    color: var(--accent2);
+    position: relative;
+    z-index: 1;
+  }
+
+  .mentor-glow-ring {
+    position: absolute;
+    inset: -8px;
+    border: 1px solid rgba(200,168,75,0.18);
+  }
+
+  .mentor-info .mentor-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent2);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .mentor-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    color: var(--text);
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+
+  .mentor-title {
+    font-size: 0.95rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .mentor-title strong { color: var(--accent2); font-weight: 500; }
+
+  .mentor-quote {
+    font-style: italic;
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.8;
+    border-left: 2px solid var(--accent2);
+    padding-left: 16px;
+    margin-top: 16px;
+  }
+
+  /* ── CONTACT ── */
+  #contact {
+    padding: 120px 60px;
+    border-top: 1px solid var(--border);
+    background: var(--bg2);
+  }
+
+  .contact-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .contact-text p {
+    color: var(--muted);
+    line-height: 1.9;
+    font-size: 1.05rem;
+    margin-bottom: 40px;
+  }
+
+  .contact-links { display: flex; flex-direction: column; gap: 16px; }
+
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.3s;
+  }
+
+  .contact-link:hover {
+    border-color: var(--accent);
+    transform: translateX(6px);
+  }
+
+  .contact-link-icon { font-size: 1.4rem; flex-shrink: 0; }
+
+  .contact-link-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .contact-form {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 48px;
+  }
+
+  .form-field { margin-bottom: 24px; }
+
+  .form-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .form-input, .form-textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 0.95rem;
+    padding: 14px 18px;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+
+  .form-input:focus, .form-textarea:focus { border-color: var(--accent); }
+  .form-textarea { height: 120px; resize: none; }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 40px 60px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .footer-copy {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .footer-accent {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .pre-animate { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .visible     { opacity: 1; transform: translateY(0); }
+
+  /* ── HERO LAYOUT ── */
+  .hero-split {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 60px;
+    align-items: center;
+    width: 100%;
+  }
+
+  .hero-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 32px;
+  }
+
+  .hero-photo-wrap {
+    width: 220px; height: 220px;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .hero-photo {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, rgba(0,212,170,0.1), rgba(0,153,255,0.08));
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 3rem;
+    color: var(--accent);
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-photo-corner {
+    position: absolute;
+    width: 20px; height: 20px;
+    border-color: var(--accent);
+    border-style: solid;
+  }
+
+  .hero-photo-corner.tl { top: -6px; left: -6px; border-width: 2px 0 0 2px; }
+  .hero-photo-corner.tr { top: -6px; right: -6px; border-width: 2px 2px 0 0; }
+  .hero-photo-corner.bl { bottom: -6px; left: -6px; border-width: 0 0 2px 2px; }
+  .hero-photo-corner.br { bottom: -6px; right: -6px; border-width: 0 2px 2px 0; }
+
+  .hero-photo-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(124,106,255,0.08);
+    border: 1px solid rgba(124,106,255,0.25);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .hero-photo-badge-dot {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    #hero { padding: 100px 24px 60px; }
+    .hero-split { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    #about, #skills, #games, #team, #mentor, #contact { padding: 80px 24px; }
+    .about-grid, .contact-wrap { grid-template-columns: 1fr; gap: 40px; }
+    .team-card { grid-template-columns: 1fr; gap: 40px; padding: 32px; }
+    .mentor-card { flex-direction: column; gap: 32px; padding: 32px; }
+    .games-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 8px; text-align: center; padding: 32px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">MMA.DEV</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#games">Games</a></li>
+    <li><a href="#team">Team Project</a></li>
+    <li><a href="#mentor">Mentor</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-split">
+    <div class="hero-content">
+      <div class="hero-tag">Game Mechanics · Unity Developer · SR University</div>
+      <h1 class="hero-name">
+        Mohammad<br/>
+        <span>Muneer Ahmed</span>
+      </h1>
+      <p class="hero-bio">
+        A passionate <strong>Game Developer</strong> crafting interactive experiences in Unity. From classic 2D arcade mechanics to 3D flight systems — this is my Game Mechanics journey at <strong>SR University</strong>, guided by Dr. Vijaya Chandra Jadala.
+      </p>
+      <div class="hero-cta">
+        <a href="#games" class="btn-primary">View My Games →</a>
+        <a href="#team" class="btn-secondary">Team Project</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-photo-wrap">
+        <div class="hero-photo" style="padding:0;overflow:hidden;">
+          <img src="data:image/jpeg;base64,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" alt="Mohammad Muneer Ahmed" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block;" />
+          <div class="hero-photo-corner tl"></div>
+          <div class="hero-photo-corner tr"></div>
+          <div class="hero-photo-corner bl"></div>
+          <div class="hero-photo-corner br"></div>
+        </div>
+      </div>
+      <div class="hero-photo-badge">
+        <span class="hero-photo-badge-dot"></span>
+        <span>Game Mechanics Subject</span>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-number">8</div>
+          <div class="stat-label">Games Built</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">1</div>
+          <div class="stat-label">Team Project</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">Unity</div>
+          <div class="stat-label">Engine</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-label">01 / About</div>
+  <h2 class="section-title reveal">Who I Am</h2>
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p>
+        I'm <strong>Mohammad Muneer Ahmed</strong>, a third-year Computer Science undergraduate at <strong>SR University, Warangal</strong>. This portfolio showcases my work for the <strong>Game Mechanics</strong> subject — a hands-on exploration of game design and development using Unity.
+      </p>
+      <p>
+        Through this subject, I've built <strong>8 individual Unity games</strong> — each focused on a distinct mechanic: movement, physics, AI logic, puzzle systems, input handling, and more. Every project is a step deeper into understanding what makes games feel alive.
+      </p>
+      <p>
+        I also led a <strong>team project, JetClutch</strong> — a 3D fighter jet game — where I coordinated a team of 6 to bring a fully realised 3D experience to life.
+      </p>
+    </div>
+    <div class="reveal">
+      <div class="info-card">
+        <div class="info-card-label">University</div>
+        <div class="info-card-value">SR University</div>
+        <div class="info-card-sub">Warangal, Telangana</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-label">Subject</div>
+        <div class="info-card-value">Game Mechanics</div>
+        <div class="info-card-sub">B.Tech Computer Science · Sem 6</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-label">Mentor</div>
+        <div class="info-card-value">Dr. Vijaya Chandra Jadala</div>
+        <div class="info-card-sub">Professor of Game Mechanics · SR University</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label">02 / Skills</div>
+  <h2 class="section-title reveal">Tools & Tech</h2>
+  <div class="skills-grid reveal">
+    <div class="skill-chip">
+      <div class="skill-icon">🎮</div>
+      <div class="skill-name">Unity Engine</div>
+      <div class="skill-type">Game Engine</div>
+    </div>
+    <div class="skill-chip">
+      <div class="skill-icon">⚙️</div>
+      <div class="skill-name">C#</div>
+      <div class="skill-type">Language</div>
+    </div>
+    <div class="skill-chip">
+      <div class="skill-icon">🕹️</div>
+      <div class="skill-name">2D Mechanics</div>
+      <div class="skill-type">Game Design</div>
+    </div>
+    <div class="skill-chip">
+      <div class="skill-icon">🚀</div>
+      <div class="skill-name">3D Physics</div>
+      <div class="skill-type">Game Design</div>
+    </div>
+    <div class="skill-chip">
+      <div class="skill-icon">💥</div>
+      <div class="skill-name">Collision Detection</div>
+      <div class="skill-type">Core System</div>
+    </div>
+    <div class="skill-chip">
+      <div class="skill-icon">🧩</div>
+      <div class="skill-name">Puzzle Logic</div>
+      <div class="skill-type">Game Design</div>
+    </div>
+    <div class="skill-chip">
+      <div class="skill-icon">🎯</div>
+      <div class="skill-name">Input Handling</div>
+      <div class="skill-type">Core System</div>
+    </div>
+    <div class="skill-chip">
+      <div class="skill-icon">📷</div>
+      <div class="skill-name">Camera Systems</div>
+      <div class="skill-type">3D</div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM PROJECT -->
+<section id="team">
+  <div class="section-label">03 / Team Project</div>
+  <h2 class="section-title reveal">Collaborative Work</h2>
+  <div class="team-card reveal">
+    <div class="team-card-left">
+      <span class="team-badge">TEAM_PROJECT_01</span>
+      <h3>JetClutch</h3>
+      <p class="team-desc">
+        A <strong>3D action game</strong> developed in Unity where the player controls a fighter jet navigating through an open environment. The gameplay focuses on basic flight movement — forward motion, turning, and altitude control — while avoiding obstacles and maintaining stability. Demonstrates <strong>3D object control, camera follow systems, physics-based movement</strong>, and real-time environment interaction.
+      </p>
+      <div class="team-role-badge">Team Leader</div>
+      <div class="team-tags">
+        <span class="tag">Unity 3D</span>
+        <span class="tag">Flight Mechanics</span>
+        <span class="tag">Physics</span>
+        <span class="tag">Camera System</span>
+        <span class="tag">C#</span>
+        <span class="tag">3D Environment</span>
+      </div>
+      <a href="https://www.linkedin.com/posts/mohammad-muneer-ahmed-77a037395_unity-gamedevelopment-indiegamedev-activity-7447714978393923584-Pno1" target="_blank" class="team-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px;flex-shrink:0;"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+        View JetClutch on LinkedIn →
+      </a>
+    </div>
+    <div class="team-card-right">
+      <span class="team-meta-label">Team Members</span>
+      <div class="team-members">
+        <div class="team-member">
+          <div class="member-avatar">MM</div>
+          <span class="member-name">Mohammad Muneer Ahmed</span>
+          <span class="member-role-tag">Team Leader</span>
+        </div>
+        <div class="team-member">
+          <div class="member-avatar">KP</div>
+          <a href="https://www.linkedin.com/in/koushik-parupally-8399a4295/" target="_blank" style="text-decoration:none;color:inherit;flex:1;display:flex;align-items:center;gap:8px;">
+            <span class="member-name" style="flex:1;">Koushik Parupally</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width:12px;height:12px;flex-shrink:0;opacity:0.6;"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+          </a>
+          <span class="member-role-tag">Member</span>
+        </div>
+        <div class="team-member">
+          <div class="member-avatar">VK</div>
+          <a href="https://www.linkedin.com/in/vamshidhar-kommareddy-641b62379/" target="_blank" style="text-decoration:none;color:inherit;flex:1;display:flex;align-items:center;gap:8px;">
+            <span class="member-name" style="flex:1;">Vamshidhar Kommareddy</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width:12px;height:12px;flex-shrink:0;opacity:0.6;"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+          </a>
+          <span class="member-role-tag">Member</span>
+        </div>
+        <div class="team-member">
+          <div class="member-avatar">DA</div>
+          <a href="https://www.linkedin.com/in/daniel-anthonello-9a74b329b/" target="_blank" style="text-decoration:none;color:inherit;flex:1;display:flex;align-items:center;gap:8px;">
+            <span class="member-name" style="flex:1;">Daniel Anthonello</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width:12px;height:12px;flex-shrink:0;opacity:0.6;"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+          </a>
+          <span class="member-role-tag">Member</span>
+        </div>
+        <div class="team-member">
+          <div class="member-avatar">KS</div>
+          <a href="https://www.linkedin.com/in/kothapally-sai-charan-teja-7a14a3393/" target="_blank" style="text-decoration:none;color:inherit;flex:1;display:flex;align-items:center;gap:8px;">
+            <span class="member-name" style="flex:1;">Kothapally Sai Charan Teja</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width:12px;height:12px;flex-shrink:0;opacity:0.6;"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+          </a>
+          <span class="member-role-tag">Member</span>
+        </div>
+        <div class="team-member">
+          <div class="member-avatar">AB</div>
+          <a href="https://www.linkedin.com/in/arjun-bikkumalla-56b34b2bb/" target="_blank" style="text-decoration:none;color:inherit;flex:1;display:flex;align-items:center;gap:8px;">
+            <span class="member-name" style="flex:1;">Arjun Bikkumalla</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width:12px;height:12px;flex-shrink:0;opacity:0.6;"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+          </a>
+          <span class="member-role-tag">Member</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GAMES -->
+<section id="games">
+  <div class="section-label">04 / Games</div>
+  <h2 class="section-title reveal">What I've Built</h2>
+  <div class="games-grid">
+
+    <div class="game-card reveal">
+      <span class="game-num">GAME_01</span>
+      <h3 class="game-title">Angry Bird</h3>
+      <p class="game-desc">A simple 2D game focused on basic player movement mechanics. The player navigates using directional inputs — up, down, left, and right — demonstrating fundamental Unity concepts such as input handling, object movement, and basic scene interaction.</p>
+      <div class="game-tags">
+        <span class="tag">Unity 2D</span>
+        <span class="tag">Movement</span>
+        <span class="tag">Input Handling</span>
+      </div>
+      <a href="https://www.linkedin.com/posts/mohammad-muneer-ahmed-77a037395_unity-gamedevelopment-unity2d-activity-7425901622444113920-PTB0" target="_blank" class="game-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+        View on LinkedIn →
+      </a>
+    </div>
+
+    <div class="game-card reveal">
+      <span class="game-num">GAME_02</span>
+      <h3 class="game-title">Falling Motion</h3>
+      <p class="game-desc">A physics-based 2D game where objects descend continuously from the top of the screen. The player interacts in real-time to catch or avoid them, highlighting gravity simulation, collision detection, and real-time object spawning.</p>
+      <div class="game-tags">
+        <span class="tag">Unity 2D</span>
+        <span class="tag">Physics</span>
+        <span class="tag">Collision</span>
+        <span class="tag">Spawning</span>
+      </div>
+      <a href="https://www.linkedin.com/posts/mohammad-muneer-ahmed-77a037395_unity-gamedevelopment-unity2d-activity-7425936755951972352-WrYc" target="_blank" class="game-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+        View on LinkedIn →
+      </a>
+    </div>
+
+    <div class="game-card reveal">
+      <span class="game-num">GAME_03</span>
+      <h3 class="game-title">Tic Tac Toe</h3>
+      <p class="game-desc">The classic 2D board game built in Unity. Two players take turns placing X and O on a 3×3 grid, with win-condition logic for horizontal, vertical, and diagonal alignments. Demonstrates UI design, input handling, and turn-based game state management.</p>
+      <div class="game-tags">
+        <span class="tag">Unity 2D</span>
+        <span class="tag">UI Design</span>
+        <span class="tag">Turn-Based</span>
+        <span class="tag">C#</span>
+      </div>
+      <a href="https://www.linkedin.com/posts/mohammad-muneer-ahmed-77a037395_unity-csharp-gamedevelopment-activity-7426478196130467840-nVL-" target="_blank" class="game-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+        View on LinkedIn →
+      </a>
+    </div>
+
+    <div class="game-card reveal">
+      <span class="game-num">GAME_04</span>
+      <h3 class="game-title">Snake Game</h3>
+      <p class="game-desc">A 2D arcade classic where the player controls a continuously moving snake, collecting food to grow longer. The game ends on self-collision or boundary collision, showcasing movement control, score tracking, and game loop management in Unity.</p>
+      <div class="game-tags">
+        <span class="tag">Unity 2D</span>
+        <span class="tag">Arcade</span>
+        <span class="tag">Score Tracking</span>
+        <span class="tag">Game Loop</span>
+      </div>
+      <a href="https://www.linkedin.com/posts/mohammad-muneer-ahmed-77a037395_unity-gamedevelopment-csharp-activity-7426684848880164864-Irt-" target="_blank" class="game-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+        View on LinkedIn →
+      </a>
+    </div>
+
+    <div class="game-card reveal">
+      <span class="game-num">GAME_05</span>
+      <h3 class="game-title">StreetRacer 2D</h3>
+      <p class="game-desc">A 2D racing game where the player steers a car along a continuous road, dodging obstacles and other vehicles. Focuses on left/right movement controls and speed management, demonstrating object movement, collision detection, and distance tracking.</p>
+      <div class="game-tags">
+        <span class="tag">Unity 2D</span>
+        <span class="tag">Racing</span>
+        <span class="tag">Obstacle Avoidance</span>
+        <span class="tag">C#</span>
+      </div>
+      <a href="https://www.linkedin.com/posts/mohammad-muneer-ahmed-77a037395_unity-csharp-gamedevelopment-activity-7429791586764410880-7waJ" target="_blank" class="game-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+        View on LinkedIn →
+      </a>
+    </div>
+
+    <div class="game-card reveal">
+      <span class="game-num">GAME_06</span>
+      <h3 class="game-title">15 Puzzle Game</h3>
+      <p class="game-desc">A 2D puzzle game based on the classic 15-puzzle: a 4×4 grid of numbered tiles with one empty space. The player slides tiles to arrange them in numerical order, emphasising logical thinking, grid-based movement, tile swapping, and win-condition checking.</p>
+      <div class="game-tags">
+        <span class="tag">Unity 2D</span>
+        <span class="tag">Puzzle</span>
+        <span class="tag">Grid Logic</span>
+        <span class="tag">UI</span>
+      </div>
+      <a href="https://www.linkedin.com/posts/mohammad-muneer-ahmed-77a037395_gamedevelopment-unity-learningbybuilding-activity-7430949102470901760-AoIf" target="_blank" class="game-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+        View on LinkedIn →
+      </a>
+    </div>
+
+    <div class="game-card reveal">
+      <span class="game-num">GAME_07</span>
+      <h3 class="game-title">2D Space Shooter</h3>
+      <p class="game-desc">A fast-paced 2D action game where the player pilots a spaceship, firing projectiles to destroy incoming enemies. Demands quick reflexes and sharp avoidance skills, showcasing shooting mechanics, enemy spawning systems, and real-time score tracking.</p>
+      <div class="game-tags">
+        <span class="tag">Unity 2D</span>
+        <span class="tag">Shooter</span>
+        <span class="tag">Enemy AI</span>
+        <span class="tag">Projectiles</span>
+      </div>
+      <a href="https://www.linkedin.com/posts/mohammad-muneer-ahmed-77a037395_unity-csharp-gamedevelopment-activity-7441375334660292608-b-LE" target="_blank" class="game-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+        View on LinkedIn →
+      </a>
+    </div>
+
+    <div class="game-card reveal">
+      <span class="game-num">GAME_08</span>
+      <h3 class="game-title">Zig-Zag Car Game</h3>
+      <p class="game-desc">An arcade-style 2D game where the player's car moves forward continuously, switching direction in a zig-zag pattern based on user input. Staying on the narrow path requires precise timing and sharp reflexes — demonstrating continuous movement and input-based direction switching.</p>
+      <div class="game-tags">
+        <span class="tag">Unity 2D</span>
+        <span class="tag">Arcade</span>
+        <span class="tag">Precision</span>
+        <span class="tag">Direction Logic</span>
+      </div>
+      <a href="https://www.linkedin.com/posts/mohammad-muneer-ahmed-77a037395_zig-zag-car-game-development-using-unity-activity-7441713670688190465-uOqP" target="_blank" class="game-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+        View on LinkedIn →
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- MENTOR -->
+<section id="mentor">
+  <div class="section-label">05 / Mentor</div>
+  <h2 class="section-title reveal">Guided By</h2>
+  <div class="mentor-card reveal">
+    <div class="mentor-avatar-wrap">
+      <div class="mentor-avatar">VJ</div>
+      <div class="mentor-glow-ring"></div>
+    </div>
+    <div class="mentor-info">
+      <span class="mentor-label">Faculty Mentor · Game Mechanics</span>
+      <a href="https://www.linkedin.com/in/dr-vijaya-chandra-jadala-3455a1a9/" target="_blank" style="text-decoration:none;">
+        <div class="mentor-name" style="
+          background: linear-gradient(135deg, #c8a84b, #f0d080, #c8a84b);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          filter: drop-shadow(0 0 18px rgba(200,168,75,0.35));
+          transition: filter 0.3s;
+          cursor: pointer;
+        " onmouseover="this.style.filter='drop-shadow(0 0 28px rgba(200,168,75,0.6))'" onmouseout="this.style.filter='drop-shadow(0 0 18px rgba(200,168,75,0.35))'">
+          Dr. Vijaya Chandra Jadala ↗
+        </div>
+      </a>
+      <div class="mentor-title">
+        Professor of Game Mechanics · <strong>SR University, Warangal</strong>
+      </div>
+      <div class="mentor-quote">
+        Under the guidance of Dr. Jadala, I learned to approach game development not just as coding, but as the craft of designing experiences — each mechanic a deliberate choice that shapes how a player thinks and feels.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-label">06 / Contact</div>
+  <h2 class="section-title reveal">Let's Connect</h2>
+  <div class="contact-wrap">
+    <div class="contact-text reveal">
+      <p>
+        I'm always open to conversations about game development, collaborations, and new opportunities. Feel free to reach out through any of the channels below.
+      </p>
+      <div class="contact-links">
+        <a href="https://www.linkedin.com/in/md-muneer-ahmed-a912a2386/" target="_blank" class="contact-link">
+          <span class="contact-link-icon">💼</span>
+          <div>
+            <span class="contact-link-label">LinkedIn</span>
+            md-muneer-ahmed
+          </div>
+        </a>
+        <a href="https://github.com/MDMuneerAhmed-creator" target="_blank" class="contact-link">
+          <span class="contact-link-icon">🐙</span>
+          <div>
+            <span class="contact-link-label">GitHub</span>
+            MDMuneerAhmed-creator
+          </div>
+        </a>
+        <a href="https://www.instagram.com/muneeeeerrr/" target="_blank" class="contact-link">
+          <span class="contact-link-icon">📸</span>
+          <div>
+            <span class="contact-link-label">Instagram</span>
+            @muneeeeerrr
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="contact-form">
+        <div class="form-field">
+          <label class="form-label">Your Name</label>
+          <input type="text" class="form-input" placeholder="Jane Doe" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">Your Email</label>
+          <input type="email" class="form-input" placeholder="jane@example.com" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">Message</label>
+          <textarea class="form-textarea" placeholder="Say something..."></textarea>
+        </div>
+        <button class="btn-primary" style="border:none;cursor:pointer;width:fit-content;" onclick="alert('Message sent! (Demo)')">Send Message →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-copy">© 2025 Mohammad Muneer Ahmed · Game Mechanics Portfolio</div>
+  <div class="footer-accent">SR University · CS 2023–2027</div>
+</footer>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  reveals.forEach(el => el.classList.add('pre-animate'));
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => {
+          e.target.classList.remove('pre-animate');
+          e.target.classList.add('visible');
+        }, i * 80);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => io.observe(el));
+
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 100) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current ? 'var(--accent)' : '';
+    });
+  });
+</script>
+</body>
+</html>
